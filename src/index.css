@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@theme {
+  /* Softer, more pastel palette based on the Flexit image */
+  --color-brand-primary: #8B5CF6; /* Softer violet */
+  --color-brand-secondary: #A78BFA; /* Lighter violet */
+  --color-brand-accent: #DDD6FE; /* Very light lavender */
+  --color-brand-light: #F9FAFB;
+  --color-brand-dark: #312E81; /* Soft navy */
+  --color-brand-neutral: #F3F4F6;
+  --color-brand-text: #1F2937; /* Softer gray-dark */
+  --color-brand-border: #E5E7EB;
+
+  --color-success-500: #34D399; /* Softer emerald */
+  --color-warning-500: #FBBF24; /* Softer amber */
+  --color-danger-500: #F87171; /* Softer red */
+
+  --font-dm-sans: 'Outfit', 'Inter', system-ui, sans-serif;
+}
+
+body {
+  background-color: var(--color-brand-neutral);
+  color: var(--color-brand-text);
+  font-family: var(--font-dm-sans);
+}
+
+/* Custom utilities */
+@utility glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+@utility brand-gradient {
+  background: linear-gradient(135deg, var(--color-brand-primary), var(--color-brand-secondary));
+}
+
+@utility shadow-premium {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+}
