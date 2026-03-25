@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { Save, Eye, EyeOff } from 'lucide-react';
 
 export default function MetricBuilder() {
+    const API = import.meta.env.VITE_API_URL;
     const [cards, setCards] = useState([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
-        fetch('http://localhost:3001/api/config/metrics')
+        fetch('${API}/api/config/metrics')
             .then(res => res.json())
             .then(data => {
                 if (data.success && data.data.cards) {
@@ -24,7 +25,7 @@ export default function MetricBuilder() {
     const handleSave = async () => {
         setSaving(true);
         try {
-            await fetch('http://localhost:3001/api/config/metrics', {
+            await fetch('${API}/api/config/metrics', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ cards })

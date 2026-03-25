@@ -46,7 +46,7 @@ export default function TicketsList() {
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('todos');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    
+
     // Modal Form State
     const [formData, setFormData] = useState({
         rut: '',
@@ -60,14 +60,16 @@ export default function TicketsList() {
         fetchTicketsAndConfig();
     }, []);
 
+    const API = import.meta.env.VITE_API_URL;
+
     const fetchTicketsAndConfig = async () => {
         try {
-            const ticketsRes = await axios.get('http://localhost:3001/api/tickets');
+            const ticketsRes = await axios.get(`${API}/api/tickets`);
             setTickets(ticketsRes.data.data);
-            
+
             // Also try to get categories for the modal, but don't blow up if it fails
             try {
-                const configRes = await axios.get('http://localhost:3001/api/config/categories');
+                const configRes = await axios.get('${API}/api/config/categories');
                 if (configRes.data.success) setConfig(configRes.data.data);
             } catch (e) {
                 console.warn('Could not load categories:', e.message);
@@ -92,8 +94,8 @@ export default function TicketsList() {
                 details: formData.details,
                 channel: 'admin'
             };
-            
-            const res = await axios.post('http://localhost:3001/api/tickets', payload);
+
+            const res = await axios.post(`${API}/api/tickets`, payload);
             if (res.data.success) {
                 setIsModalOpen(false);
                 setFormData({ rut: '', correo: '', main_category: '', sub_option: '', details: '' });
@@ -183,7 +185,7 @@ export default function TicketsList() {
                     <h2 className="text-3xl font-bold text-brand-text tracking-tight">Tickets</h2>
                     <p className="text-gray-400 text-sm font-medium">Bandeja de gestión de solicitudes.</p>
                 </div>
-                <button 
+                <button
                     onClick={() => setIsModalOpen(true)}
                     className="flex items-center gap-3 px-8 py-3 brand-gradient text-white font-bold text-sm rounded-full shadow-lg shadow-brand-primary/20 hover:scale-105 active:scale-95 transition-all"
                 >
@@ -280,22 +282,22 @@ export default function TicketsList() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-gray-500 px-2">RUT</label>
-                                    <input 
+                                    <input
                                         required
-                                        type="text" 
+                                        type="text"
                                         value={formData.rut}
-                                        onChange={(e) => setFormData({...formData, rut: e.target.value})}
+                                        onChange={(e) => setFormData({ ...formData, rut: e.target.value })}
                                         className="w-full px-6 py-3 rounded-full border border-brand-border focus:ring-4 focus:ring-brand-primary/10 transition-all text-sm font-medium"
                                         placeholder="12.345.678-9"
                                     />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-gray-500 px-2">Correo</label>
-                                    <input 
+                                    <input
                                         required
-                                        type="email" 
+                                        type="email"
                                         value={formData.correo}
-                                        onChange={(e) => setFormData({...formData, correo: e.target.value})}
+                                        onChange={(e) => setFormData({ ...formData, correo: e.target.value })}
                                         className="w-full px-6 py-3 rounded-full border border-brand-border focus:ring-4 focus:ring-brand-primary/10 transition-all text-sm font-medium"
                                         placeholder="usuario@servit.com"
                                     />
@@ -305,11 +307,11 @@ export default function TicketsList() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-2">Categoría Principal</label>
-                                    <select 
+                                    <select
                                         required
                                         value={formData.main_category}
                                         onChange={(e) => {
-                                            setFormData({...formData, main_category: e.target.value, sub_option: ''});
+                                            setFormData({ ...formData, main_category: e.target.value, sub_option: '' });
                                         }}
                                         className="w-full px-6 py-3 rounded-full border border-brand-border focus:ring-4 focus:ring-brand-primary/10 transition-all text-sm font-medium bg-white"
                                     >
@@ -319,14 +321,14 @@ export default function TicketsList() {
                                         ))}
                                     </select>
                                 </div>
-                                
+
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-2">Requerimiento</label>
-                                    <select 
+                                    <select
                                         required
                                         disabled={!formData.main_category}
                                         value={formData.sub_option}
-                                        onChange={(e) => setFormData({...formData, sub_option: e.target.value})}
+                                        onChange={(e) => setFormData({ ...formData, sub_option: e.target.value })}
                                         className="w-full px-6 py-3 rounded-full border border-brand-border focus:ring-4 focus:ring-brand-primary/10 transition-all text-sm font-medium bg-white disabled:opacity-50"
                                     >
                                         <option value="" disabled>Selecciona un requerimiento...</option>
@@ -339,11 +341,11 @@ export default function TicketsList() {
 
                             <div className="space-y-2">
                                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Detalle</label>
-                                <textarea 
+                                <textarea
                                     required
                                     rows="4"
                                     value={formData.details}
-                                    onChange={(e) => setFormData({...formData, details: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, details: e.target.value })}
                                     className="w-full px-5 py-3 rounded-xl border border-brand-border focus:ring-4 focus:ring-brand-primary/10 transition-all text-sm font-medium"
                                     placeholder="Describe el requerimiento..."
                                 />

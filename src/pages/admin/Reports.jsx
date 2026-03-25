@@ -4,6 +4,7 @@ import { Download, Calendar, BarChart3, PieChart as PieIcon, FileText } from 'lu
 import * as Recharts from 'recharts';
 
 export default function Reports() {
+    const API = import.meta.env.VITE_API_URL;
     const [dateRange, setDateRange] = useState('30');
     const [reportData, setReportData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -11,7 +12,7 @@ export default function Reports() {
     useEffect(() => {
         const fetchReport = async () => {
             try {
-                const res = await axios.get(`http://localhost:3001/api/tickets/report?days=${dateRange}`);
+                const res = await axios.get(`${API}/api/tickets/report?days=${dateRange}`);
                 setReportData(res.data.data);
             } catch (err) {
                 console.error('Error fetching reports', err);
@@ -24,7 +25,7 @@ export default function Reports() {
 
     const handleExport = () => {
         alert('Generando exportación CSV real desde PostgreSQL...');
-        window.open(`http://localhost:3001/api/surveys/export`, '_blank');
+        window.open(`${API}/api/surveys/export`, '_blank');
     };
 
     if (loading) {
@@ -149,8 +150,8 @@ export default function Reports() {
                                     Automático (Real-time)
                                 </td>
                                 <td className="px-6 py-5 text-right">
-                                    <button 
-                                        onClick={() => window.open(`http://localhost:3001/api/tickets/export?days=${dateRange}`, '_blank')}
+                                    <button
+                                        onClick={() => window.open(`${API}/api/tickets/export?days=${dateRange}`, '_blank')}
                                         className="px-6 py-2.5 bg-success-500/10 text-success-600 hover:bg-success-500 hover:text-white rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95"
                                     >
                                         Descargar dataset

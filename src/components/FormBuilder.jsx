@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { 
-    Plus, Trash2, ArrowUp, ArrowDown, Settings2, 
-    CheckCircle2, AlertCircle, Layout, Hash, 
+import {
+    Plus, Trash2, ArrowUp, ArrowDown, Settings2,
+    CheckCircle2, AlertCircle, Layout, Hash,
     Type, Mail, List, Calendar, FileText, Paperclip,
     ChevronDown
 } from 'lucide-react';
 import CategoryModal from './CategoryModal';
 
 export default function FormBuilder() {
+    const API = import.meta.env.VITE_API_URL;
     const [categories, setCategories] = useState([]);
     const [selectedCategoryId, setSelectedCategoryId] = useState('');
     const [fields, setFields] = useState([]);
@@ -43,7 +44,7 @@ export default function FormBuilder() {
     const fetchInitialData = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('http://localhost:3001/api/config/categories');
+            const res = await axios.get(`${API}/api/config/categories`);
             if (res.data.success) {
                 const cats = res.data.data.sort((a, b) => a.order - b.order);
                 setCategories(cats);
@@ -61,7 +62,7 @@ export default function FormBuilder() {
     const fetchFields = async (catId) => {
         setLoadingFields(true);
         try {
-            const res = await axios.get(`http://localhost:3001/api/config/fields?categoryId=${catId}`);
+            const res = await axios.get(`${API}/api/config/fields?categoryId=${catId}`);
             if (res.data.success) {
                 setFields(res.data.data.sort((a, b) => a.order - b.order));
             }
@@ -96,9 +97,9 @@ export default function FormBuilder() {
         const newFields = [...fields];
         const newIdx = direction === 'up' ? index - 1 : index + 1;
         if (newIdx < 0 || newIdx >= newFields.length) return;
-        
+
         [newFields[index], newFields[newIdx]] = [newFields[newIdx], newFields[index]];
-        
+
         // Re-assign order
         const updated = newFields.map((f, i) => ({ ...f, order: i }));
         setFields(updated);
@@ -109,7 +110,7 @@ export default function FormBuilder() {
         setSaving(true);
         setMessage(null);
         try {
-            await axios.post('http://localhost:3001/api/config/fields', {
+            await axios.post(`${API}/api/config/fields`, {
                 fields,
                 categoryId: selectedCategoryId
             });
@@ -144,7 +145,7 @@ export default function FormBuilder() {
                 <div className="flex flex-wrap gap-3">
                     {/* Category Selector inside Builder */}
                     <div className="relative min-w-[200px]">
-                        <select 
+                        <select
                             value={selectedCategoryId}
                             onChange={(e) => setSelectedCategoryId(e.target.value)}
                             className="w-full appearance-none bg-brand-neutral/20 border-brand-border rounded-2xl py-4 px-6 pr-12 text-[10px] font-black uppercase tracking-widest focus:ring-4 focus:ring-brand-primary/10 transition-all outline-none"
@@ -157,13 +158,13 @@ export default function FormBuilder() {
                         <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                     </div>
 
-                    <button 
+                    <button
                         onClick={() => setIsCategoryModalOpen(true)}
                         className="flex items-center gap-2 bg-brand-neutral/50 text-brand-text px-6 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-brand-neutral transition-all border border-brand-border"
                     >
                         Gestionar Categorías
                     </button>
-                    <button 
+                    <button
                         onClick={handleAddField}
                         disabled={!selectedCategoryId}
                         className="flex items-center gap-2 bg-brand-light text-brand-primary px-6 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-brand-primary hover:text-white transition-all shadow-md shadow-brand-primary/10 disabled:opacity-30"
@@ -221,7 +222,7 @@ export default function FormBuilder() {
                                             return <Icon className="w-5 h-5" />;
                                         })()}
                                     </div>
-                                    <input 
+                                    <input
                                         type="text"
                                         value={field.label}
                                         onChange={(e) => handleUpdateField(field.id, 'label', e.target.value)}
@@ -232,7 +233,7 @@ export default function FormBuilder() {
 
                                 {/* Tipo Selección */}
                                 <div className="w-40 px-4">
-                                    <select 
+                                    <select
                                         value={field.type}
                                         onChange={(e) => handleUpdateField(field.id, 'type', e.target.value)}
                                         className="w-full bg-brand-neutral/40 border-0 rounded-xl py-2 px-3 text-[10px] font-black uppercase tracking-tight focus:ring-0 transition-all"
@@ -245,7 +246,7 @@ export default function FormBuilder() {
 
                                 {/* Toggles */}
                                 <div className="w-24 flex justify-center">
-                                    <button 
+                                    <button
                                         onClick={() => handleUpdateField(field.id, 'required', !field.required)}
                                         className={`w-10 h-5 rounded-full relative transition-all ${field.required ? 'bg-brand-primary' : 'bg-gray-200'}`}
                                     >
@@ -254,7 +255,7 @@ export default function FormBuilder() {
                                 </div>
 
                                 <div className="w-24 flex justify-center">
-                                    <button 
+                                    <button
                                         onClick={() => handleUpdateField(field.id, 'active', !field.active)}
                                         className={`w-10 h-5 rounded-full relative transition-all ${field.active ? 'bg-success-500' : 'bg-gray-200'}`}
                                     >
@@ -277,7 +278,7 @@ export default function FormBuilder() {
             {/* Save Button */}
             {selectedCategoryId && fields.length > 0 && (
                 <div className="flex justify-end pt-4">
-                    <button 
+                    <button
                         onClick={handleSave}
                         disabled={saving}
                         className="flex items-center gap-3 bg-brand-primary text-white px-12 py-5 rounded-[2rem] font-black text-sm uppercase tracking-widest shadow-2xl shadow-brand-primary/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-30"
@@ -288,12 +289,12 @@ export default function FormBuilder() {
             )}
 
             {/* Categorías Modal */}
-            <CategoryModal 
-                isOpen={isCategoryModalOpen} 
+            <CategoryModal
+                isOpen={isCategoryModalOpen}
                 onClose={() => {
                     setIsCategoryModalOpen(false);
                     fetchInitialData(); // Refresh list in case categories changed
-                }} 
+                }}
             />
         </div>
     );

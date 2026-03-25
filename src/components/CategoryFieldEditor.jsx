@@ -6,6 +6,7 @@ export default function CategoryFieldEditor({ category, onBack }) {
     const [fields, setFields] = useState([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const API = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
         if (category.id && !category.id.toString().startsWith('temp_')) {
@@ -17,7 +18,7 @@ export default function CategoryFieldEditor({ category, onBack }) {
 
     const fetchFields = async () => {
         try {
-            const res = await axios.get(`http://localhost:3001/api/config/categories/${category.id}/fields`);
+            const res = await axios.get(`${API}/api/config/categories/${category.id}/fields`);
             if (res.data.success) {
                 setFields(res.data.data);
             }
@@ -36,7 +37,7 @@ export default function CategoryFieldEditor({ category, onBack }) {
         setSaving(true);
         try {
             const updated = fields.map((f, i) => ({ ...f, order: i + 1, category_id: category.id }));
-            await axios.post(`http://localhost:3001/api/config/categories/${category.id}/fields`, { fields: updated });
+            await axios.post(`${API}/api/config/categories/${category.id}/fields`, { fields: updated });
             setFields(updated);
             alert('Campos de la categoría guardados.');
         } catch (err) {
@@ -114,7 +115,7 @@ export default function CategoryFieldEditor({ category, onBack }) {
                             <div className="flex-1 grid grid-cols-12 gap-6 items-center">
                                 <div className="col-span-4">
                                     <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Etiqueta de Campo</label>
-                                    <input 
+                                    <input
                                         type="text"
                                         value={field.label}
                                         onChange={(e) => updateField(field.id, 'label', e.target.value)}
@@ -122,10 +123,10 @@ export default function CategoryFieldEditor({ category, onBack }) {
                                         placeholder="Ej: RUT, Teléfono..."
                                     />
                                 </div>
-                                
+
                                 <div className="col-span-3">
                                     <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Tipo</label>
-                                    <select 
+                                    <select
                                         value={field.type}
                                         onChange={(e) => updateField(field.id, 'type', e.target.value)}
                                         className="w-full text-sm border-brand-border rounded-xl bg-brand-neutral/30"
@@ -142,7 +143,7 @@ export default function CategoryFieldEditor({ category, onBack }) {
 
                                 <div className="col-span-2 flex flex-col items-center pt-4">
                                     <label className="text-[9px] font-bold text-gray-400 uppercase mb-2">Obligatorio</label>
-                                    <input 
+                                    <input
                                         type="checkbox"
                                         checked={field.required}
                                         onChange={(e) => updateField(field.id, 'required', e.target.checked)}
@@ -152,7 +153,7 @@ export default function CategoryFieldEditor({ category, onBack }) {
 
                                 <div className="col-span-2 flex flex-col items-center pt-4">
                                     <label className="text-[9px] font-bold text-gray-400 uppercase mb-2">Activo</label>
-                                    <input 
+                                    <input
                                         type="checkbox"
                                         checked={field.active}
                                         onChange={(e) => updateField(field.id, 'active', e.target.checked)}
@@ -168,7 +169,7 @@ export default function CategoryFieldEditor({ category, onBack }) {
                             </div>
                         </div>
                     ))}
-                    
+
                     {fields.length === 0 && (
                         <div className="text-center py-10 bg-brand-light/10 border-2 border-dashed border-brand-border rounded-2xl text-gray-400 text-xs">
                             Crea campos para que aparezcan al seleccionar esta categoría.

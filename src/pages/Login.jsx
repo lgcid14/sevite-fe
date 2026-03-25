@@ -4,6 +4,7 @@ import { Mail, Lock, LogIn } from 'lucide-react';
 import Logo from '../components/Logo';
 
 export default function Login() {
+    const API = import.meta.env.VITE_API_URL;
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -16,7 +17,7 @@ export default function Login() {
         setLoading(true);
         setError('');
         try {
-            const response = await fetch('http://localhost:3001/api/auth/login', {
+            const response = await fetch(`${API}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 
 export default function TicketDetail() {
+    const API = import.meta.env.VITE_API_URL;
     const { id } = useParams();
     const [ticket, setTicket] = useState(null);
     const [history, setHistory] = useState([]);
@@ -23,9 +24,9 @@ export default function TicketDetail() {
         const loadData = async () => {
             try {
                 const [ticketRes, historyRes, configRes] = await Promise.all([
-                    axios.get(`http://localhost:3001/api/tickets/${id}`),
-                    axios.get(`http://localhost:3001/api/tickets/${id}/history`),
-                    axios.get(`http://localhost:3001/api/config/ticket-view`)
+                    axios.get(`${API}/api/tickets/${id}`),
+                    axios.get(`${API}/api/tickets/${id}/history`),
+                    axios.get(`${API}/api/config/ticket-view`)
                 ]);
                 setTicket(ticketRes.data.data);
                 setHistory(historyRes.data.data || []);
@@ -51,9 +52,9 @@ export default function TicketDetail() {
 
     const handleStatusChange = async (newStatus) => {
         try {
-            await axios.patch(`http://localhost:3001/api/tickets/${id}/status`, { status: newStatus });
+            await axios.patch(`${API}/api/tickets/${id}/status`, { status: newStatus });
             setTicket({ ...ticket, status: newStatus });
-            const historyRes = await axios.get(`http://localhost:3001/api/tickets/${id}/history`);
+            const historyRes = await axios.get(`${API}/api/tickets/${id}/history`);
             setHistory(historyRes.data.data || []);
         } catch (err) {
             alert('Error actualizando estado.');
@@ -62,8 +63,8 @@ export default function TicketDetail() {
 
     const refreshTicket = async () => {
         const [ticketRes, historyRes] = await Promise.all([
-            axios.get(`http://localhost:3001/api/tickets/${id}`),
-            axios.get(`http://localhost:3001/api/tickets/${id}/history`)
+            axios.get(`${API}/api/tickets/${id}`),
+            axios.get(`${API}/api/tickets/${id}/history`)
         ]);
         setTicket(ticketRes.data.data);
         setHistory(historyRes.data.data || []);
@@ -73,7 +74,7 @@ export default function TicketDetail() {
         if (!replyText.trim()) return;
         setSendingReply(true);
         try {
-            await axios.post(`http://localhost:3001/api/tickets/${id}/reply`, {
+            await axios.post(`${API}/api/tickets/${id}/reply`, {
                 message: replyText,
                 userId: 'admin'
             });
@@ -90,7 +91,7 @@ export default function TicketDetail() {
         setAiLoading(true);
         setShowAiPanel(true);
         try {
-            const res = await axios.post(`http://localhost:3001/api/tickets/${id}/ai-suggest`);
+            const res = await axios.post(`${API}/api/tickets/${id}/ai-suggest`);
             if (res.data.success) {
                 setAiSuggestion(res.data.data);
             } else {
@@ -388,7 +389,7 @@ export default function TicketDetail() {
                             <h4 className="text-[11px] font-black text-gray-500 mb-4 flex items-center gap-2">
                                 <FileText className="w-4 h-4 text-brand-secondary" /> {getSectionTitle('original_details', 'Detalle del requerimiento')}
                             </h4>
-                            
+
                             <div className="bg-brand-neutral/30 p-6 rounded-[2rem] border border-brand-border/40 relative mb-4">
                                 <p className="text-sm text-gray-800 leading-relaxed font-semibold text-center italic">"{ticket.details || 'Sin descripción adicional'}"</p>
                             </div>

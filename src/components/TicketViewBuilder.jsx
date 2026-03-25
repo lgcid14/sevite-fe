@@ -3,13 +3,14 @@ import { Save, Eye, EyeOff, GripVertical, Type, LayoutTemplate } from 'lucide-re
 import axios from 'axios';
 
 export default function TicketViewBuilder() {
+    const API = import.meta.env.VITE_API_URL;
     const [config, setConfig] = useState({ columns: [], detailLayout: [] });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
-        axios.get('http://localhost:3001/api/config/ticket-view')
+        axios.get(`${API}/api/config/ticket-view`)
             .then(res => {
                 if (res.data.success && res.data.data) {
                     setConfig({
@@ -29,7 +30,7 @@ export default function TicketViewBuilder() {
     const handleSave = async () => {
         setSaving(true);
         try {
-            await axios.post('http://localhost:3001/api/config/ticket-view', config);
+            await axios.post(`${API}/api/config/ticket-view`, config);
             alert('Configuración de vista de tickets guardada.');
         } catch (err) {
             alert('Error al guardar configuración');

@@ -4,6 +4,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
 import { Download, Calendar, MessageSquareHeart } from 'lucide-react';
 
 export default function Surveys() {
+    const API = import.meta.env.VITE_API_URL;
     const [metrics, setMetrics] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -13,7 +14,7 @@ export default function Surveys() {
 
     const fetchMetrics = async () => {
         try {
-            const res = await axios.get('http://localhost:3001/api/surveys/metrics');
+            const res = await axios.get(`${API}/api/surveys/metrics`);
             setMetrics(res.data.data);
         } catch (err) {
             console.error('Error fetching metrics', err);
@@ -122,8 +123,8 @@ export default function Surveys() {
                                         </td>
                                         <td className="px-6 py-4 text-center">
                                             <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-xs ${resp.score >= 9 ? 'bg-green-100 text-green-700 border border-green-200' :
-                                                    resp.score >= 7 ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' :
-                                                        'bg-red-100 text-red-700 border border-red-200'
+                                                resp.score >= 7 ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' :
+                                                    'bg-red-100 text-red-700 border border-red-200'
                                                 }`}>
                                                 {resp.score}
                                             </span>

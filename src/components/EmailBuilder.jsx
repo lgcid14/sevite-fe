@@ -4,13 +4,14 @@ import { Mail, Save, Layers, Plus, Edit2, Trash2 } from 'lucide-react';
 import axios from 'axios';
 
 export default function EmailBuilder() {
+    const API = import.meta.env.VITE_API_URL;
     const emailEditorRef = useRef(null);
     const [saving, setSaving] = useState(false);
     const [loading, setLoading] = useState(true);
-    
+
     const [templates, setTemplates] = useState([]);
     const [selectedTemplateId, setSelectedTemplateId] = useState('new');
-    
+
     // Form state for current template
     const [templateName, setTemplateName] = useState('Plantilla Nueva');
     const [assignedWorkflows, setAssignedWorkflows] = useState([]);
@@ -29,7 +30,7 @@ export default function EmailBuilder() {
     const fetchTemplates = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('http://localhost:3001/api/config/email-template');
+            const res = await axios.get(`${API}/api/config/email-template`);
             if (res.data.success) {
                 setTemplates(res.data.data);
             }
@@ -76,8 +77,8 @@ export default function EmailBuilder() {
     };
 
     const toggleWorkflow = (workflowId) => {
-        setAssignedWorkflows(prev => 
-            prev.includes(workflowId) 
+        setAssignedWorkflows(prev =>
+            prev.includes(workflowId)
                 ? prev.filter(w => w !== workflowId)
                 : [...prev, workflowId]
         );
@@ -94,9 +95,9 @@ export default function EmailBuilder() {
     const handleDelete = async () => {
         if (selectedTemplateId === 'new') return;
         if (!window.confirm("¿Seguro que deseas eliminar esta plantilla?")) return;
-        
+
         try {
-            await axios.delete(`http://localhost:3001/api/config/email-template/${selectedTemplateId}`);
+            await axios.delete(`${API}/api/config/email-template/${selectedTemplateId}`);
             alert("Plantilla eliminada.");
             setSelectedTemplateId('new');
             loadTemplateToEditor(null);
@@ -109,10 +110,10 @@ export default function EmailBuilder() {
     const handleSave = () => {
         if (!emailEditorRef.current?.editor) return;
         setSaving(true);
-        
+
         emailEditorRef.current.editor.exportHtml(async (data) => {
             const { design, html } = data;
-            
+
             try {
                 const payload = {
                     name: templateName,
@@ -120,15 +121,15 @@ export default function EmailBuilder() {
                     design_json: design,
                     html_content: html
                 };
-                
+
                 if (selectedTemplateId !== 'new') {
                     payload.id = selectedTemplateId;
                 }
 
-                await axios.post('http://localhost:3001/api/config/email-template', payload);
+                await axios.post(`${API}/api/config/email-template`, payload);
                 alert(`Plantilla guardada exitosamente.`);
                 await fetchTemplates(); // Refresh lists
-                
+
                 // If it was new, select the new one (we don't strictly have the ID from response in this minimal impl, 
                 // but we can just fetch templates, the list will update. For simplicity, just refetch).
             } catch (err) {
@@ -143,7 +144,7 @@ export default function EmailBuilder() {
         <div className="space-y-6 animate-in fade-in duration-500 max-w-7xl mx-auto">
             {/* Header / Controls */}
             <div className="bg-white p-6 rounded-[2rem] border border-brand-border shadow-sm flex flex-col gap-6">
-                
+
                 {/* Top Row: Dropdown, Actions */}
                 <div className="flex flex-col md:flex-row justify-between gap-4">
                     <div className="flex items-center gap-4">
@@ -192,8 +193,8 @@ export default function EmailBuilder() {
                             </label>
                             <div className="flex items-center gap-2">
                                 {isEditingName ? (
-                                    <input 
-                                        type="text" 
+                                    <input
+                                        type="text"
                                         value={templateName}
                                         onChange={(e) => setTemplateName(e.target.value)}
                                         onBlur={() => setIsEditingName(false)}
@@ -201,7 +202,7 @@ export default function EmailBuilder() {
                                         className="flex-1 text-sm px-4 py-2.5 rounded-xl border border-brand-primary outline-none focus:ring-2 focus:ring-brand-primary/20 bg-white"
                                     />
                                 ) : (
-                                    <div 
+                                    <div
                                         onClick={() => setIsEditingName(true)}
                                         className="flex-1 flex items-center justify-between text-sm px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 cursor-pointer hover:bg-gray-100 group transition-colors"
                                     >

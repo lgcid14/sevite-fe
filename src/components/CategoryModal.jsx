@@ -9,6 +9,7 @@ export default function CategoryModal({ isOpen, onClose }) {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const API = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
         if (isOpen) {
@@ -19,7 +20,7 @@ export default function CategoryModal({ isOpen, onClose }) {
     const fetchCategories = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('http://localhost:3001/api/config/categories');
+            const res = await axios.get(`${API}/api/config/categories`);
             if (res.data.success) {
                 setCategories(res.data.data.sort((a, b) => a.order - b.order));
             }
@@ -62,7 +63,7 @@ export default function CategoryModal({ isOpen, onClose }) {
         setSaving(true);
         setError('');
         try {
-            await axios.post('http://localhost:3001/api/config/categories', categories);
+            await axios.post(`${API}/api/config/categories`, categories);
             setSuccess('Categorías actualizadas correctamente');
             setTimeout(() => {
                 setSuccess('');
@@ -96,7 +97,7 @@ export default function CategoryModal({ isOpen, onClose }) {
                     {/* Add Category Section */}
                     <div className="flex gap-2">
                         <div className="relative flex-1 group">
-                            <input 
+                            <input
                                 type="text"
                                 value={newCategory}
                                 onChange={(e) => {
@@ -108,7 +109,7 @@ export default function CategoryModal({ isOpen, onClose }) {
                                 className="w-full bg-brand-neutral/30 border-brand-border rounded-2xl py-4 px-6 text-sm font-bold placeholder:text-gray-300 focus:ring-4 focus:ring-brand-primary/10 transition-all outline-none"
                             />
                         </div>
-                        <button 
+                        <button
                             onClick={handleAddCategory}
                             className="bg-brand-primary text-white p-4 rounded-2xl hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/20 hover:scale-105 active:scale-95"
                         >
@@ -141,15 +142,15 @@ export default function CategoryModal({ isOpen, onClose }) {
                         ) : (
                             <div className="space-y-2">
                                 {categories.map((cat, idx) => (
-                                    <div 
-                                        key={cat.id} 
+                                    <div
+                                        key={cat.id}
                                         className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-brand-border/50 hover:bg-white transition-all group"
                                     >
                                         <div className="flex items-center gap-3">
                                             <span className="w-6 h-6 flex items-center justify-center bg-white rounded-lg text-[10px] font-black text-gray-400 border border-gray-100">{idx + 1}</span>
                                             <span className="text-sm font-bold text-gray-700">{cat.label}</span>
                                         </div>
-                                        <button 
+                                        <button
                                             onClick={() => handleRemoveCategory(cat.id)}
                                             className="p-2 text-gray-300 hover:text-danger-500 hover:bg-danger-50 rounded-lg transition-all"
                                         >
@@ -164,13 +165,13 @@ export default function CategoryModal({ isOpen, onClose }) {
 
                 {/* Footer */}
                 <div className="p-8 bg-gray-50 border-t border-gray-100 flex gap-3">
-                    <button 
+                    <button
                         onClick={onClose}
                         className="flex-1 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-gray-600 transition-colors"
                     >
                         Cancelar
                     </button>
-                    <button 
+                    <button
                         onClick={handleSave}
                         disabled={saving || loading}
                         className="flex-[2] py-4 bg-brand-primary text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-brand-primary/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center gap-2"

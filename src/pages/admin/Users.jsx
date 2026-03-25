@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Users as UsersIcon, Plus, Pencil, Trash2, X, Check, ShieldCheck, Headset, User } from 'lucide-react';
 
-const API = 'http://localhost:3001/api/users';
+const API = import.meta.env.VITE_API_URL;
 
 const ROLES = [
     { value: 'admin', label: 'Administrador', color: 'bg-violet-100 text-violet-700' },

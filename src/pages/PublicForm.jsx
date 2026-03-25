@@ -41,9 +41,10 @@ const MAIN_CATEGORIES = [
 ];
 
 export default function PublicForm() {
+    const API = import.meta.env.VITE_API_URL;
     const [ticketCreated, setTicketCreated] = useState(null);
     const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = useForm();
-    
+
     const selectedCategoryId = watch('main_category');
     const selectedCategoryObj = MAIN_CATEGORIES.find(c => c.id === selectedCategoryId);
 
@@ -64,7 +65,7 @@ export default function PublicForm() {
                 dynamicData: {}
             };
 
-            const res = await axios.post('http://localhost:3001/api/tickets', payload);
+            const res = await axios.post(`${API}/api/tickets`, payload);
             setTicketCreated(res.data.data.display_id || res.data.data.id);
         } catch (err) {
             alert('Hubo un error al enviar tu solicitud.');
@@ -103,10 +104,10 @@ export default function PublicForm() {
             </svg>
 
             <div className="relative z-10 w-full max-w-[1300px] mx-auto flex min-h-screen px-6 lg:px-12">
-                
+
                 {/* ── LEFT — Form (Scrollable area) ── */}
                 <div className="w-full lg:w-[50%] flex flex-col py-10 lg:pr-10 max-h-screen overflow-y-auto custom-scrollbar">
-                    
+
                     {/* Header */}
                     <div className="mb-8 text-center flex flex-col items-center">
                         <Logo className="w-20 h-20 mb-2" />
@@ -137,7 +138,7 @@ export default function PublicForm() {
                                 {selectedCategoryId && (
                                     <div className="space-y-6 animate-in slide-in-from-top-4 duration-500">
                                         <div className="h-px w-full my-6" style={{ background: '#EDE9FE' }}></div>
-                                        
+
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div className="space-y-2">
                                                 <label className="block text-[10px] font-bold text-[#A78BFA] uppercase tracking-widest px-1">RUT *</label>
@@ -193,11 +194,11 @@ export default function PublicForm() {
                         {[
                             { top: '24%', left: '15%', size: 14 },
                             { top: '15%', left: '75%', size: 9 },
-                            { top: '68%', left: '8%',  size: 10 },
+                            { top: '68%', left: '8%', size: 10 },
                             { top: '80%', left: '80%', size: 8 },
                             { top: '48%', left: '92%', size: 11 },
                             { top: '85%', left: '45%', size: 8 },
-                            { top: '35%', left: '5%',  size: 7 },
+                            { top: '35%', left: '5%', size: 7 },
                         ].map((s, i) => (
                             <div key={i} className="absolute" style={{ top: s.top, left: s.left, width: s.size, height: s.size, opacity: 0.6 }}>
                                 <svg viewBox="0 0 24 24" fill="#8B5CF6">
@@ -213,7 +214,8 @@ export default function PublicForm() {
             </div>
 
             {/* Hidden custom scrollbar style for left column */}
-            <style dangerouslySetInnerHTML={{__html: `
+            <style dangerouslySetInnerHTML={{
+                __html: `
                 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
                 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
                 .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(187,178,216,0.4); border-radius: 10px; }

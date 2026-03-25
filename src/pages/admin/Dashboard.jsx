@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Calendar, Clock, CheckCircle2, AlertTriangle, MessageSquare, BarChart3, TrendingUp, Zap } from 'lucide-react';
 
 export default function Dashboard() {
+    const API = import.meta.env.VITE_API_URL;
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
@@ -17,7 +18,7 @@ export default function Dashboard() {
             else setIsRefreshing(true);
 
             try {
-                const response = await axios.get(`http://localhost:3001/api/dashboard/overview?range=${dateRange}`);
+                const response = await axios.get(`${API}/api/dashboard/overview?range=${dateRange}`);
                 if (response.data.success && isMounted) {
                     setStats(response.data.data);
                 }
@@ -103,7 +104,7 @@ export default function Dashboard() {
                             <StatRow label="En Gestión" value={stats?.tickets?.byStatus?.pendiente || 0} color="bg-brand-primary" total={stats?.tickets?.total} />
                             <StatRow label="Resueltos" value={stats?.tickets?.byStatus?.resuelto || 0} color="bg-success-500" total={stats?.tickets?.total} />
                         </div>
-                        
+
                         <div className="p-5 rounded-2xl bg-brand-neutral border border-brand-border/50 flex gap-4 mt-6 shadow-inner text-left">
                             <AlertTriangle className="w-6 h-6 text-brand-primary flex-shrink-0" />
                             <div>
@@ -121,12 +122,12 @@ export default function Dashboard() {
                             <span className="w-1.5 h-6 bg-brand-secondary rounded-full"></span> Feedback
                         </h3>
                     </div>
-                    
+
                     <div className="flex-1 overflow-y-auto space-y-4 pr-2" style={{ maxHeight: '280px' }}>
                         {!stats?.experience?.recentFeedbacks || stats.experience.recentFeedbacks.length === 0 ? (
                             <div className="h-full flex flex-col items-center justify-center text-gray-400">
                                 <MessageSquare className="w-8 h-8 mb-3 opacity-20" />
-                                <p className="text-[11px] font-semibold text-center leading-relaxed">No hay comentarios de<br/>usuarios en este periodo.</p>
+                                <p className="text-[11px] font-semibold text-center leading-relaxed">No hay comentarios de<br />usuarios en este periodo.</p>
                             </div>
                         ) : (
                             stats.experience.recentFeedbacks.map((fb, idx) => (
@@ -150,7 +151,7 @@ export default function Dashboard() {
 
                 {/* 3. Bloque Experiencia */}
                 <div className={`bg-white rounded-[2rem] border border-brand-border shadow-premium p-6 xl:p-8 lg:col-span-1 relative overflow-hidden group transition-all duration-500 ${isRefreshing ? 'opacity-90' : 'opacity-100'}`}>
-                     <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:rotate-12 transition-transform duration-700">
+                    <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:rotate-12 transition-transform duration-700">
                         <MessageSquare className="w-24 h-24" />
                     </div>
                     <div className="flex justify-between items-center mb-6 relative z-10">
@@ -158,16 +159,16 @@ export default function Dashboard() {
                             <span className="w-1.5 h-6 bg-success-500 rounded-full"></span> Experiencia de servicio
                         </h3>
                     </div>
-                    
+
                     <div className="space-y-6 relative z-10">
                         {/* Subcards de Experiencia NPS y CSAT */}
                         <div className="grid grid-cols-2 gap-4">
-                            
+
                             <div className="p-5 bg-success-500/10 rounded-2xl text-center border border-success-500/10 transition-transform hover:scale-105">
                                 <p className="text-[10px] text-success-500 font-extrabold uppercase mb-1 tracking-widest">NPS</p>
                                 <p className="text-3xl font-black text-success-500">{stats?.experience?.nps || 0}</p>
                             </div>
-                            
+
                             <div className="p-5 bg-brand-primary/10 rounded-2xl text-center border border-brand-primary/10 transition-transform hover:scale-105">
                                 <p className="text-[10px] text-brand-primary font-extrabold uppercase mb-1 tracking-widest">CSAT</p>
                                 <p className="text-3xl font-black text-brand-primary">{stats?.experience?.csat || 0}%</p>
@@ -176,7 +177,7 @@ export default function Dashboard() {
                         </div>
 
                         {/* Summary Texto Minimalista */}
-                         <div className="p-4 bg-brand-dark/5 rounded-2xl border border-brand-border text-center">
+                        <div className="p-4 bg-brand-dark/5 rounded-2xl border border-brand-border text-center">
                             <p className="text-[11px] lg:text-[12px] text-gray-600 font-semibold tracking-wide">Basado en <span className="font-extrabold text-brand-primary">{stats?.experience?.responses || 0}</span> respuestas registradas</p>
                         </div>
                     </div>
