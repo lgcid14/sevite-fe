@@ -166,10 +166,16 @@ export default function PublicForm() {
 
                                         <div className="space-y-2">
                                             <label className="block text-[10px] font-bold text-[#A78BFA] uppercase tracking-widest px-1">Tipo de Ticket *</label>
-                                            <select {...register('ticket_type_id', { required: true })} defaultValue="" className="w-full text-sm px-5 py-3 rounded-xl outline-none transition-all font-semibold select-none cursor-pointer" style={{ border: '1px solid #EDE9FE', background: '#FAFAFF', color: '#374151' }} onFocus={(e) => { e.target.style.borderColor = '#8B5CF6'; e.target.style.boxShadow = '0 0 0 3px rgba(139,92,246,0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#EDE9FE'; e.target.style.boxShadow = 'none'; }}>
-                                                <option value="" disabled>Selecciona un tipo...</option>
+                                            <select
+                                                {...register('ticket_type_id', { required: true })}
+                                                className="w-full text-sm px-5 py-3 rounded-xl outline-none transition-all font-semibold cursor-pointer"
+                                                style={{ border: '1px solid #EDE9FE', background: '#FAFAFF', color: '#374151' }}
+                                            >
+                                                <option value="">Selecciona un tipo...</option>
                                                 {ticketTypes.map(t => (
-                                                    <option key={t.id} value={t.id}>{t.type}</option>
+                                                    <option key={t.id} value={t.id}>
+                                                        {t.type}
+                                                    </option>
                                                 ))}
                                             </select>
                                             {errors.ticket_type_id && <p className="mt-2 text-[10px] text-red-500 font-bold uppercase px-1">El tipo de ticket es obligatorio</p>}
