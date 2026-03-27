@@ -133,6 +133,19 @@ export default function PublicForm() {
                     <div className="w-full rounded-[2rem] p-8" style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(16px)', border: '1px solid rgba(187,178,216,0.3)', boxShadow: '0 8px 40px rgba(107,56,209,0.08)' }}>
                         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                             <div className="space-y-6">
+                                {/* 1. RUT y Correo */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="block text-[10px] font-bold text-[#A78BFA] uppercase tracking-widest px-1">RUT *</label>
+                                        <input {...register('rut', { required: true })} className="w-full text-sm px-5 py-3 rounded-xl outline-none transition-all placeholder:text-gray-400 font-medium" style={{ border: '1px solid #EDE9FE', background: '#FAFAFF', color: '#374151' }} placeholder="12.345.678-9" onFocus={(e) => { e.target.style.borderColor = '#8B5CF6'; e.target.style.boxShadow = '0 0 0 3px rgba(139,92,246,0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#EDE9FE'; e.target.style.boxShadow = 'none'; }} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="block text-[10px] font-bold text-[#A78BFA] uppercase tracking-widest px-1">Correo Electrónico *</label>
+                                        <input {...register('correo', { required: true })} type="email" className="w-full text-sm px-5 py-3 rounded-xl outline-none transition-all placeholder:text-gray-400 font-medium" style={{ border: '1px solid #EDE9FE', background: '#FAFAFF', color: '#374151' }} placeholder="tu@servit.com" onFocus={(e) => { e.target.style.borderColor = '#8B5CF6'; e.target.style.boxShadow = '0 0 0 3px rgba(139,92,246,0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#EDE9FE'; e.target.style.boxShadow = 'none'; }} />
+                                    </div>
+                                </div>
+
+                                {/* 2. Tipo de Ticket */}
                                 <div className="space-y-2">
                                     <label className="block text-[10px] font-bold text-[#A78BFA] uppercase tracking-widest px-1">Tipo de Ticket *</label>
                                     <select
@@ -150,13 +163,14 @@ export default function PublicForm() {
                                     {errors.ticket_type_id && <p className="mt-2 text-[10px] text-red-500 font-bold uppercase px-1">El tipo de ticket es obligatorio</p>}
                                 </div>
 
+                                {/* 3. Título del Ticket */}
                                 <div className="space-y-2">
                                     <label className="block text-[10px] font-bold text-[#A78BFA] uppercase tracking-widest px-1">Título del Ticket *</label>
                                     <input {...register('title', { required: true })} className="w-full text-sm px-5 py-3 rounded-xl outline-none transition-all placeholder:text-gray-400 font-medium" style={{ border: '1px solid #EDE9FE', background: '#FAFAFF', color: '#374151' }} placeholder="Resumen de la solicitud..." onFocus={(e) => { e.target.style.borderColor = '#8B5CF6'; e.target.style.boxShadow = '0 0 0 3px rgba(139,92,246,0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#EDE9FE'; e.target.style.boxShadow = 'none'; }} />
                                     {errors.title && <p className="mt-2 text-[10px] text-red-500 font-bold uppercase px-1">El título es obligatorio</p>}
                                 </div>
 
-                                {/* Category Selection */}
+                                {/* 4. Categoría Principal */}
                                 <div>
                                     <label className="block text-[10px] font-bold text-[#A78BFA] mb-3 uppercase tracking-widest px-1">¿En qué te podemos ayudar? *</label>
                                     <div className="flex flex-col gap-3">
@@ -173,29 +187,27 @@ export default function PublicForm() {
                                     {errors.main_category && <p className="mt-2 text-[10px] text-red-500 font-bold uppercase px-1">Selecciona una categoría</p>}
                                 </div>
 
+                                {/* 4b. Requerimiento */}
                                 {selectedCategoryId && (
                                     <div className="space-y-6 animate-in slide-in-from-top-4 duration-500">
-                                        <div className="h-px w-full my-6" style={{ background: '#EDE9FE' }}></div>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div className="space-y-2">
-                                                <label className="block text-[10px] font-bold text-[#A78BFA] uppercase tracking-widest px-1">RUT *</label>
-                                                <input {...register('rut', { required: true })} className="w-full text-sm px-5 py-3 rounded-xl outline-none transition-all placeholder:text-gray-400 font-medium" style={{ border: '1px solid #EDE9FE', background: '#FAFAFF', color: '#374151' }} placeholder="12.345.678-9" onFocus={(e) => { e.target.style.borderColor = '#8B5CF6'; e.target.style.boxShadow = '0 0 0 3px rgba(139,92,246,0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#EDE9FE'; e.target.style.boxShadow = 'none'; }} />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <label className="block text-[10px] font-bold text-[#A78BFA] uppercase tracking-widest px-1">Correo Electrónico *</label>
-                                                <input {...register('correo', { required: true })} type="email" className="w-full text-sm px-5 py-3 rounded-xl outline-none transition-all placeholder:text-gray-400 font-medium" style={{ border: '1px solid #EDE9FE', background: '#FAFAFF', color: '#374151' }} placeholder="tu@servit.com" onFocus={(e) => { e.target.style.borderColor = '#8B5CF6'; e.target.style.boxShadow = '0 0 0 3px rgba(139,92,246,0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#EDE9FE'; e.target.style.boxShadow = 'none'; }} />
-                                            </div>
-                                        </div>
-
-
-
                                         <div className="space-y-2">
-                                            <label className="block text-[10px] font-bold text-[#A78BFA] uppercase tracking-widest px-1">Detalle del requerimiento (opcional)</label>
-                                            <textarea {...register('details')} rows={3} className="w-full text-sm px-5 py-3 rounded-xl outline-none transition-all placeholder:text-gray-400 font-medium resize-none" style={{ border: '1px solid #EDE9FE', background: '#FAFAFF', color: '#374151' }} placeholder="Cualquier información adicional..." onFocus={(e) => { e.target.style.borderColor = '#8B5CF6'; e.target.style.boxShadow = '0 0 0 3px rgba(139,92,246,0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#EDE9FE'; e.target.style.boxShadow = 'none'; }} />
+                                            <label className="block text-[10px] font-bold text-[#A78BFA] uppercase tracking-widest px-1">Selecciona tu Requerimiento *</label>
+                                            <select {...register('sub_option', { required: true })} className="w-full text-sm px-5 py-3 rounded-xl outline-none transition-all font-semibold select-none cursor-pointer" style={{ border: '1px solid #EDE9FE', background: '#FAFAFF', color: '#374151' }} onFocus={(e) => { e.target.style.borderColor = '#8B5CF6'; e.target.style.boxShadow = '0 0 0 3px rgba(139,92,246,0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#EDE9FE'; e.target.style.boxShadow = 'none'; }}>
+                                                <option value="" disabled>Selecciona una opción detallada...</option>
+                                                {selectedCategoryObj?.options.map(opt => (
+                                                    <option key={opt} value={opt}>{opt}</option>
+                                                ))}
+                                            </select>
+                                            {errors.sub_option && <p className="mt-2 text-[10px] text-red-500 font-bold uppercase px-1">El requerimiento es obligatorio</p>}
                                         </div>
                                     </div>
                                 )}
+
+                                {/* 5. Descripción */}
+                                <div className="space-y-2">
+                                    <label className="block text-[10px] font-bold text-[#A78BFA] uppercase tracking-widest px-1">Detalle del requerimiento (opcional)</label>
+                                    <textarea {...register('details')} rows={3} className="w-full text-sm px-5 py-3 rounded-xl outline-none transition-all placeholder:text-gray-400 font-medium resize-none" style={{ border: '1px solid #EDE9FE', background: '#FAFAFF', color: '#374151' }} placeholder="Cualquier información adicional..." onFocus={(e) => { e.target.style.borderColor = '#8B5CF6'; e.target.style.boxShadow = '0 0 0 3px rgba(139,92,246,0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#EDE9FE'; e.target.style.boxShadow = 'none'; }} />
+                                </div>
                             </div>
 
                             <div className="pt-6">
