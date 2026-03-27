@@ -91,6 +91,10 @@ export default function TicketsList() {
     const handleCreateTicket = async (e) => {
         e.preventDefault();
         try {
+            const userStr = localStorage.getItem('servit_user');
+            const userObj = userStr ? JSON.parse(userStr) : null;
+            const reporter_id = userObj?.id || null;
+
             const mainCatObj = MAIN_CATEGORIES.find(c => c.id === formData.main_category);
             const payload = {
                 title: formData.title,
@@ -99,6 +103,7 @@ export default function TicketsList() {
                 type: formData.sub_option,
                 ticket_type_id: formData.ticket_type_id,
                 details: formData.details,
+                reporter_id: reporter_id,
                 channel: 'admin'
             };
 

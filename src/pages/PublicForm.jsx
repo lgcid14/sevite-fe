@@ -68,6 +68,10 @@ export default function PublicForm() {
 
     const onSubmit = async (data) => {
         try {
+            const userStr = localStorage.getItem('servit_user');
+            const userObj = userStr ? JSON.parse(userStr) : null;
+            const reporter_id = userObj?.id || null;
+
             const payload = {
                 title: data.title,
                 category_id: null,
@@ -75,6 +79,7 @@ export default function PublicForm() {
                 type: data.sub_option,
                 ticket_type_id: data.ticket_type_id,
                 details: data.details || 'Solicitud Centro de Ayuda',
+                reporter_id: reporter_id,
                 dynamicData: {}
             };
 
