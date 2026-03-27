@@ -53,8 +53,10 @@ export default function TicketsList() {
         correo: '',
         main_category: '',
         sub_option: '',
+        ticket_type_id: '',
         details: ''
     });
+    const [ticketTypes, setTicketTypes] = useState([]);
 
     useEffect(() => {
         fetchTicketsAndConfig();
@@ -69,10 +71,17 @@ export default function TicketsList() {
 
             // Also try to get categories for the modal, but don't blow up if it fails
             try {
-                const configRes = await axios.get('${API}/api/config/categories');
+                const configRes = await axios.get(`${API}/api/config/categories`);
                 if (configRes.data.success) setConfig(configRes.data.data);
             } catch (e) {
                 console.warn('Could not load categories:', e.message);
+            }
+
+            try {
+                const typesRes = await axios.get(`${API}/api/tickets/types`);
+                setTicketTypes(typesRes.data?.data || typesRes.data || []);
+            } catch (e) {
+                console.warn('Could not load ticket types:', e.message);
             }
         } catch (err) {
             console.error('Failed to fetch tickets:', err);
@@ -91,6 +100,7 @@ export default function TicketsList() {
                 category_id: null,
                 category: mainCatObj ? mainCatObj.label : 'General',
                 type: formData.sub_option,
+                ticket_type_id: formData.ticket_type_id,
                 details: formData.details,
                 channel: 'admin'
             };
@@ -98,7 +108,7 @@ export default function TicketsList() {
             const res = await axios.post(`${API}/api/tickets`, payload);
             if (res.data.success) {
                 setIsModalOpen(false);
-                setFormData({ rut: '', correo: '', main_category: '', sub_option: '', details: '' });
+                setFormData({ rut: '', correo: '', main_category: '', sub_option: '', ticket_type_id: '', details: '' });
                 fetchTicketsAndConfig(); // Refresh list
             }
         } catch (err) {
@@ -337,6 +347,21 @@ export default function TicketsList() {
                                         ))}
                                     </select>
                                 </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-2">Tipo de Ticket *</label>
+                                <select
+                                    required
+                                    value={formData.ticket_type_id}
+                                    onChange={(e) => setFormData({ ...formData, ticket_type_id: e.target.value })}
+                                    className="w-full px-6 py-3 rounded-full border border-brand-border focus:ring-4 focus:ring-brand-primary/10 transition-all text-sm font-medium bg-white"
+                                >
+                                    <option value="" disabled>Selecciona un tipo...</option>
+                                    {ticketTypes.map(t => (
+                                        <option key={t.id} value={t.id}>{t.type}</option>
+                                    ))}
+                                </select>
                             </div>
 
                             <div className="space-y-2">
