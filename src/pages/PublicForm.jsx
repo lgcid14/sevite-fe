@@ -71,6 +71,7 @@ export default function PublicForm() {
             const payload = {
                 rut: data.rut,
                 correo: data.correo,
+                title: data.title,
                 category_id: null,
                 category: selectedCategoryObj?.label || 'General',
                 type: data.sub_option,
@@ -132,6 +133,29 @@ export default function PublicForm() {
                     <div className="w-full rounded-[2rem] p-8" style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(16px)', border: '1px solid rgba(187,178,216,0.3)', boxShadow: '0 8px 40px rgba(107,56,209,0.08)' }}>
                         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                             <div className="space-y-6">
+                                <div className="space-y-2">
+                                    <label className="block text-[10px] font-bold text-[#A78BFA] uppercase tracking-widest px-1">Tipo de Ticket *</label>
+                                    <select
+                                        {...register('ticket_type_id', { required: true })}
+                                        className="w-full text-sm px-5 py-3 rounded-xl outline-none transition-all font-semibold cursor-pointer"
+                                        style={{ border: '1px solid #EDE9FE', background: '#FAFAFF', color: '#374151' }}
+                                    >
+                                        <option value="">Selecciona un tipo...</option>
+                                        {ticketTypes.map(t => (
+                                            <option key={t.id} value={t.id}>
+                                                {t.type}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {errors.ticket_type_id && <p className="mt-2 text-[10px] text-red-500 font-bold uppercase px-1">El tipo de ticket es obligatorio</p>}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="block text-[10px] font-bold text-[#A78BFA] uppercase tracking-widest px-1">Título del Ticket *</label>
+                                    <input {...register('title', { required: true })} className="w-full text-sm px-5 py-3 rounded-xl outline-none transition-all placeholder:text-gray-400 font-medium" style={{ border: '1px solid #EDE9FE', background: '#FAFAFF', color: '#374151' }} placeholder="Resumen de la solicitud..." onFocus={(e) => { e.target.style.borderColor = '#8B5CF6'; e.target.style.boxShadow = '0 0 0 3px rgba(139,92,246,0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#EDE9FE'; e.target.style.boxShadow = 'none'; }} />
+                                    {errors.title && <p className="mt-2 text-[10px] text-red-500 font-bold uppercase px-1">El título es obligatorio</p>}
+                                </div>
+
                                 {/* Category Selection */}
                                 <div>
                                     <label className="block text-[10px] font-bold text-[#A78BFA] mb-3 uppercase tracking-widest px-1">¿En qué te podemos ayudar? *</label>
@@ -164,33 +188,7 @@ export default function PublicForm() {
                                             </div>
                                         </div>
 
-                                        <div className="space-y-2">
-                                            <label className="block text-[10px] font-bold text-[#A78BFA] uppercase tracking-widest px-1">Tipo de Ticket *</label>
-                                            <select
-                                                {...register('ticket_type_id', { required: true })}
-                                                className="w-full text-sm px-5 py-3 rounded-xl outline-none transition-all font-semibold cursor-pointer"
-                                                style={{ border: '1px solid #EDE9FE', background: '#FAFAFF', color: '#374151' }}
-                                            >
-                                                <option value="">Selecciona un tipo...</option>
-                                                {ticketTypes.map(t => (
-                                                    <option key={t.id} value={t.id}>
-                                                        {t.type}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                            {errors.ticket_type_id && <p className="mt-2 text-[10px] text-red-500 font-bold uppercase px-1">El tipo de ticket es obligatorio</p>}
-                                        </div>
 
-                                        <div className="space-y-2">
-                                            <label className="block text-[10px] font-bold text-[#A78BFA] uppercase tracking-widest px-1">Selecciona tu Requerimiento *</label>
-                                            <select {...register('sub_option', { required: true })} className="w-full text-sm px-5 py-3 rounded-xl outline-none transition-all font-semibold select-none cursor-pointer" style={{ border: '1px solid #EDE9FE', background: '#FAFAFF', color: '#374151' }} onFocus={(e) => { e.target.style.borderColor = '#8B5CF6'; e.target.style.boxShadow = '0 0 0 3px rgba(139,92,246,0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#EDE9FE'; e.target.style.boxShadow = 'none'; }}>
-                                                <option value="" disabled>Selecciona una opción detallada...</option>
-                                                {selectedCategoryObj?.options.map(opt => (
-                                                    <option key={opt} value={opt}>{opt}</option>
-                                                ))}
-                                            </select>
-                                            {errors.sub_option && <p className="mt-2 text-[10px] text-red-500 font-bold uppercase px-1">El requerimiento es obligatorio</p>}
-                                        </div>
 
                                         <div className="space-y-2">
                                             <label className="block text-[10px] font-bold text-[#A78BFA] uppercase tracking-widest px-1">Detalle del requerimiento (opcional)</label>

@@ -51,6 +51,7 @@ export default function TicketsList() {
     const [formData, setFormData] = useState({
         rut: '',
         correo: '',
+        title: '',
         main_category: '',
         sub_option: '',
         ticket_type_id: '',
@@ -97,6 +98,7 @@ export default function TicketsList() {
             const payload = {
                 rut: formData.rut,
                 correo: formData.correo,
+                title: formData.title,
                 category_id: null,
                 category: mainCatObj ? mainCatObj.label : 'General',
                 type: formData.sub_option,
@@ -108,7 +110,7 @@ export default function TicketsList() {
             const res = await axios.post(`${API}/api/tickets`, payload);
             if (res.data.success) {
                 setIsModalOpen(false);
-                setFormData({ rut: '', correo: '', main_category: '', sub_option: '', ticket_type_id: '', details: '' });
+                setFormData({ rut: '', correo: '', title: '', main_category: '', sub_option: '', ticket_type_id: '', details: '' });
                 fetchTicketsAndConfig(); // Refresh list
             }
         } catch (err) {
@@ -362,6 +364,18 @@ export default function TicketsList() {
                                         <option key={t.id} value={t.id}>{t.type}</option>
                                     ))}
                                 </select>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-2">Título de Ticket *</label>
+                                <input
+                                    required
+                                    type="text"
+                                    value={formData.title}
+                                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                    className="w-full px-6 py-3 rounded-full border border-brand-border focus:ring-4 focus:ring-brand-primary/10 transition-all text-sm font-medium"
+                                    placeholder="Resumen del requerimiento..."
+                                />
                             </div>
 
                             <div className="space-y-2">

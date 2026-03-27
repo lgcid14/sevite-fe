@@ -14,8 +14,9 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<PublicForm />} />
+        <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/crear-ticket" element={<PublicForm />} />
 
         {/* Protected Admin Routes */}
         <Route path="/admin" element={<ProtectedRoute />}>
