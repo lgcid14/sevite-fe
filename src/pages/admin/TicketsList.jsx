@@ -283,14 +283,14 @@ export default function TicketsList() {
             {/* CREATE TICKET MODAL */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/30 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden border border-brand-border animate-in zoom-in-95 duration-300">
-                        <div className="p-5 md:p-6 border-b border-brand-border/50 flex justify-between items-center bg-brand-light/30">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] flex flex-col overflow-hidden border border-brand-border animate-in zoom-in-95 duration-300">
+                        <div className="p-5 md:p-6 border-b border-brand-border/50 flex justify-between items-center bg-brand-light/30 shrink-0">
                             <h3 className="text-xl font-bold text-brand-text">Crear nuevo ticket</h3>
                             <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white rounded-full transition-colors">
                                 <X className="w-5 h-5 text-gray-400" />
                             </button>
                         </div>
-                        <form onSubmit={handleCreateTicket} className="p-10 space-y-6">
+                        <form onSubmit={handleCreateTicket} className="p-8 md:p-10 space-y-6 overflow-y-auto custom-scrollbar flex-1">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-gray-500 px-2">RUT</label>
