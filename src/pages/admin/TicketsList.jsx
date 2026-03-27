@@ -47,10 +47,7 @@ export default function TicketsList() {
     const [statusFilter, setStatusFilter] = useState('todos');
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // Modal Form State
     const [formData, setFormData] = useState({
-        rut: '',
-        correo: '',
         title: '',
         main_category: '',
         sub_option: '',
@@ -96,8 +93,6 @@ export default function TicketsList() {
         try {
             const mainCatObj = MAIN_CATEGORIES.find(c => c.id === formData.main_category);
             const payload = {
-                rut: formData.rut,
-                correo: formData.correo,
                 title: formData.title,
                 category_id: null,
                 category: mainCatObj ? mainCatObj.label : 'General',
@@ -110,7 +105,7 @@ export default function TicketsList() {
             const res = await axios.post(`${API}/api/tickets`, payload);
             if (res.data.success) {
                 setIsModalOpen(false);
-                setFormData({ rut: '', correo: '', title: '', main_category: '', sub_option: '', ticket_type_id: '', details: '' });
+                setFormData({ title: '', main_category: '', sub_option: '', ticket_type_id: '', details: '' });
                 fetchTicketsAndConfig(); // Refresh list
             }
         } catch (err) {
@@ -130,18 +125,6 @@ export default function TicketsList() {
                         </div>
                         <div className="text-[10px] font-bold text-gray-400 italic">Detalles</div>
                     </Link>
-                );
-            case 'rut':
-                return (
-                    <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-full brand-gradient flex items-center justify-center font-bold text-white text-[10px] shadow-sm border border-white/20 uppercase">
-                            {ticket.rut.substring(0, 2)}
-                        </div>
-                        <div>
-                            <div className="font-bold text-brand-text text-sm tracking-tight">{ticket.rut}</div>
-                            <div className="text-[10px] text-gray-400 font-medium">{ticket.email || 'Sin registro'}</div>
-                        </div>
-                    </div>
                 );
             case 'type':
                 return (
@@ -169,8 +152,7 @@ export default function TicketsList() {
     };
 
     const filteredTickets = tickets.filter(t => {
-        const matchSearch = t.rut.toLowerCase().includes(search.toLowerCase()) ||
-            (t.display_id && t.display_id.toLowerCase().includes(search.toLowerCase())) ||
+        const matchSearch = (t.display_id && t.display_id.toLowerCase().includes(search.toLowerCase())) ||
             t.id.toLowerCase().includes(search.toLowerCase());
         const matchStatus = statusFilter === 'todos' || t.status.toLowerCase() === statusFilter.toLowerCase();
         return matchSearch && matchStatus;
@@ -178,7 +160,6 @@ export default function TicketsList() {
 
     const visibleColumns = [
         { id: 'id', title: 'Ticket' },
-        { id: 'rut', title: 'Usuario' },
         { id: 'category', title: 'Categoría' },
         { id: 'type', title: 'Servicio' },
         { id: 'status', title: 'Estado' }
@@ -291,30 +272,6 @@ export default function TicketsList() {
                             </button>
                         </div>
                         <form onSubmit={handleCreateTicket} className="p-8 md:p-10 space-y-6 overflow-y-auto custom-scrollbar flex-1">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-500 px-2">RUT</label>
-                                    <input
-                                        required
-                                        type="text"
-                                        value={formData.rut}
-                                        onChange={(e) => setFormData({ ...formData, rut: e.target.value })}
-                                        className="w-full px-6 py-3 rounded-full border border-brand-border focus:ring-4 focus:ring-brand-primary/10 transition-all text-sm font-medium"
-                                        placeholder="12.345.678-9"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-500 px-2">Correo</label>
-                                    <input
-                                        required
-                                        type="email"
-                                        value={formData.correo}
-                                        onChange={(e) => setFormData({ ...formData, correo: e.target.value })}
-                                        className="w-full px-6 py-3 rounded-full border border-brand-border focus:ring-4 focus:ring-brand-primary/10 transition-all text-sm font-medium"
-                                        placeholder="usuario@servit.com"
-                                    />
-                                </div>
-                            </div>
 
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-2">Tipo de Ticket *</label>

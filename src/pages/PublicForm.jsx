@@ -69,8 +69,6 @@ export default function PublicForm() {
     const onSubmit = async (data) => {
         try {
             const payload = {
-                rut: data.rut,
-                correo: data.correo,
                 title: data.title,
                 category_id: null,
                 category: selectedCategoryObj?.label || 'General',
@@ -133,17 +131,6 @@ export default function PublicForm() {
                     <div className="w-full rounded-[2rem] p-8" style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(16px)', border: '1px solid rgba(187,178,216,0.3)', boxShadow: '0 8px 40px rgba(107,56,209,0.08)' }}>
                         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                             <div className="space-y-6">
-                                {/* 1. RUT y Correo */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <label className="block text-[10px] font-bold text-[#A78BFA] uppercase tracking-widest px-1">RUT *</label>
-                                        <input {...register('rut', { required: true })} className="w-full text-sm px-5 py-3 rounded-xl outline-none transition-all placeholder:text-gray-400 font-medium" style={{ border: '1px solid #EDE9FE', background: '#FAFAFF', color: '#374151' }} placeholder="12.345.678-9" onFocus={(e) => { e.target.style.borderColor = '#8B5CF6'; e.target.style.boxShadow = '0 0 0 3px rgba(139,92,246,0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#EDE9FE'; e.target.style.boxShadow = 'none'; }} />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="block text-[10px] font-bold text-[#A78BFA] uppercase tracking-widest px-1">Correo Electrónico *</label>
-                                        <input {...register('correo', { required: true })} type="email" className="w-full text-sm px-5 py-3 rounded-xl outline-none transition-all placeholder:text-gray-400 font-medium" style={{ border: '1px solid #EDE9FE', background: '#FAFAFF', color: '#374151' }} placeholder="tu@servit.com" onFocus={(e) => { e.target.style.borderColor = '#8B5CF6'; e.target.style.boxShadow = '0 0 0 3px rgba(139,92,246,0.1)'; }} onBlur={(e) => { e.target.style.borderColor = '#EDE9FE'; e.target.style.boxShadow = 'none'; }} />
-                                    </div>
-                                </div>
 
                                 {/* 2. Tipo de Ticket */}
                                 <div className="space-y-2">
