@@ -316,33 +316,31 @@ export default function TicketsList() {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-2">Tipo de Ticket *</label>
-                                    <select
-                                        required
-                                        value={formData.ticket_type_id}
-                                        onChange={(e) => setFormData({ ...formData, ticket_type_id: e.target.value })}
-                                        className="w-full px-6 py-3 rounded-full border border-brand-border focus:ring-4 focus:ring-brand-primary/10 transition-all text-sm font-medium bg-white"
-                                    >
-                                        <option value="" disabled>Selecciona un tipo...</option>
-                                        {ticketTypes.map(t => (
-                                            <option key={t.id} value={t.id}>{t.type}</option>
-                                        ))}
-                                    </select>
-                                </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-2">Tipo de Ticket *</label>
+                                <select
+                                    required
+                                    value={formData.ticket_type_id}
+                                    onChange={(e) => setFormData({ ...formData, ticket_type_id: e.target.value })}
+                                    className="w-full px-6 py-3 rounded-full border border-brand-border focus:ring-4 focus:ring-brand-primary/10 transition-all text-sm font-medium bg-white"
+                                >
+                                    <option value="" disabled>Selecciona un tipo...</option>
+                                    {ticketTypes.map(t => (
+                                        <option key={t.id} value={t.id}>{t.type}</option>
+                                    ))}
+                                </select>
+                            </div>
 
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-2">Título de Ticket *</label>
-                                    <input
-                                        required
-                                        type="text"
-                                        value={formData.title}
-                                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                        className="w-full px-6 py-3 rounded-full border border-brand-border focus:ring-4 focus:ring-brand-primary/10 transition-all text-sm font-medium"
-                                        placeholder="Resumen del requerimiento..."
-                                    />
-                                </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-2">Título de Ticket *</label>
+                                <input
+                                    required
+                                    type="text"
+                                    value={formData.title}
+                                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                    className="w-full px-6 py-3 rounded-full border border-brand-border focus:ring-4 focus:ring-brand-primary/10 transition-all text-sm font-medium"
+                                    placeholder="Resumen del requerimiento..."
+                                />
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
