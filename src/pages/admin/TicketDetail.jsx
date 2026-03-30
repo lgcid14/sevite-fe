@@ -6,6 +6,7 @@ import {
     MessageSquare, History, Sparkles, Search, Lightbulb,
     Send, Info, AlertCircle, Check
 } from 'lucide-react';
+import { TICKET_STATUS, getStatusStyle } from '../../utils/status';
 
 export default function TicketDetail() {
     const API = import.meta.env.VITE_API_URL;
@@ -50,12 +51,14 @@ export default function TicketDetail() {
         return config.detailLayout.find(s => s.id === secId)?.title || fallback;
     };
 
-    const handleStatusChange = async (newStatus) => {
+    const handleStatusChange = async (newStatusId) => {
         try {
-            await axios.patch(`${API}/api/tickets/${id}/status`, { status: newStatus });
-            setTicket({ ...ticket, status: newStatus });
+            await axios.patch(`${API}/api/tickets/${id}/status`, { status_id: parseInt(newStatusId) });
             const historyRes = await axios.get(`${API}/api/tickets/${id}/history`);
             setHistory(historyRes.data.data || []);
+            // Refresh ticket to get updated status string from backend
+            const ticketRes = await axios.get(`${API}/api/tickets/${id}`);
+            setTicket(ticketRes.data.data);
         } catch (err) {
             alert('Error actualizando estado.');
         }
@@ -116,14 +119,7 @@ export default function TicketDetail() {
         }
     };
 
-    const getStatusStyles = (status) => {
-        switch (status?.toLowerCase()) {
-            case 'recibido': return 'bg-yellow-100 text-yellow-700 border-yellow-200';
-            case 'pendiente': return 'bg-brand-neutral text-brand-text border-brand-border';
-            case 'resuelto': return 'bg-success-100 text-success-700 border-success-200';
-            default: return 'bg-gray-100 text-gray-700 border-gray-200';
-        }
-    };
+    // Deprecated in favor of getStatusStyle from utils
 
     if (loading) return (
         <div className="bg-white rounded-xl shadow-sm border border-brand-border h-64 flex items-center justify-center">
@@ -152,7 +148,7 @@ export default function TicketDetail() {
                         <div>
                             <div className="flex flex-wrap items-center gap-3">
                                 <h2 className="text-2xl font-black text-gray-900 tracking-tighter">#{ticket.display_id || ticket.id.substring(0, 8).toUpperCase()}</h2>
-                                <span className={`px-3 py-1 text-[10px] font-black uppercase rounded-full border ${getStatusStyles(ticket.status)} shadow-sm`}>
+                                <span className={`px-3 py-1 text-[10px] font-black uppercase rounded-full border ${getStatusStyle(ticket.status_id, ticket.status)} shadow-sm`}>
                                     {ticket.status}
                                 </span>
                                 <div className="h-6 w-px bg-gray-100 mx-1 hidden md:block"></div>
@@ -178,14 +174,16 @@ export default function TicketDetail() {
                         </button>
                         <div className="h-10 w-px bg-gray-100 mx-1 hidden md:block"></div>
                         <select
-                            value={ticket.status}
+                            value={ticket.status_id}
                             onChange={(e) => handleStatusChange(e.target.value)}
                             className="bg-gray-50 border border-gray-100 text-gray-700 text-[10px] font-black uppercase tracking-widest rounded-2xl px-4 py-3 focus:ring-4 focus:ring-brand-primary/5 focus:outline-none transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                            disabled={ticket.status?.toLowerCase() === 'resuelto'}
+                            disabled={ticket.status_id === 4 || ticket.status_id === 5}
                         >
-                            <option value="Recibido">RECIBIDO</option>
-                            <option value="Pendiente">PENDIENTE</option>
-                            <option value="Resuelto">RESUELTO</option>
+                            <option value="1">RECIBIDO</option>
+                            <option value="2">EN PROCESO</option>
+                            <option value="3">PENDIENTE INFO</option>
+                            <option value="4">RESUELTO</option>
+                            <option value="5">CERRADO</option>
                         </select>
                     </div>
                 </div>
@@ -198,7 +196,7 @@ export default function TicketDetail() {
                 <div className="lg:col-span-8 space-y-5 order-2 lg:order-1">
 
                     {/* 1. Reply Box (The main action area) */}
-                    {ticket.status?.toLowerCase() !== 'resuelto' ? (
+                    {ticket.status_id !== 4 && ticket.status_id !== 5 ? (
                         <div className="bg-white rounded-[2.5rem] border-4 border-brand-primary/10 shadow-2xl shadow-brand-primary/5 overflow-hidden focus-within:ring-8 focus-within:ring-brand-primary/5 transition-all animate-in fade-in slide-in-from-top-4 duration-500">
                             <div className="p-5 bg-brand-primary flex items-center justify-between">
                                 <span className="text-xs font-black text-white uppercase tracking-widest flex items-center gap-2">

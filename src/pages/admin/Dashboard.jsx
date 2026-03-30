@@ -84,8 +84,8 @@ export default function Dashboard() {
             <div className={`grid grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-6 transition-opacity duration-500 ${isRefreshing ? 'opacity-80' : 'opacity-100'}`}>
                 <KpiCard title="Total Solicitudes" value={stats?.tickets?.total || 0} color="bg-brand-primary" />
                 <KpiCard title="Recibidos Mismo Día" value={stats?.tickets?.receivedToday || 0} color="bg-brand-dark" />
-                <KpiCard title="En Gestión" value={stats?.tickets?.byStatus?.pendiente || 0} color="bg-warning-500" />
-                <KpiCard title="Resueltos" value={stats?.tickets?.byStatus?.resuelto || 0} color="bg-success-500" />
+                <KpiCard title="En Proceso" value={(stats?.tickets?.byStatus?.['En proceso'] || 0) + (stats?.tickets?.byStatus?.['Pendiente de información'] || 0)} color="bg-warning-500" />
+                <KpiCard title="Resueltos / Cerrados" value={(stats?.tickets?.byStatus?.['Resuelto'] || 0) + (stats?.tickets?.byStatus?.['Cerrado'] || 0)} color="bg-success-500" />
             </div>
 
             {/* 3 Grandes Bloques */}
@@ -99,17 +99,19 @@ export default function Dashboard() {
                         </h3>
                     </div>
                     <div className="space-y-6">
-                        <div className={`space-y-5 transition-opacity duration-500 ${isRefreshing ? 'opacity-80' : 'opacity-100'}`}>
-                            <StatRow label="Por Revisar" value={stats?.tickets?.byStatus?.recibido || 0} color="bg-warning-500" total={stats?.tickets?.total} />
-                            <StatRow label="En Gestión" value={stats?.tickets?.byStatus?.pendiente || 0} color="bg-brand-primary" total={stats?.tickets?.total} />
-                            <StatRow label="Resueltos" value={stats?.tickets?.byStatus?.resuelto || 0} color="bg-success-500" total={stats?.tickets?.total} />
+                        <div className={`space-y-4 transition-opacity duration-500 ${isRefreshing ? 'opacity-80' : 'opacity-100'}`}>
+                            <StatRow label="Recibidos" value={stats?.tickets?.byStatus?.['Recibido'] || 0} color="bg-yellow-500" total={stats?.tickets?.total} />
+                            <StatRow label="En proceso" value={stats?.tickets?.byStatus?.['En proceso'] || 0} color="bg-brand-primary" total={stats?.tickets?.total} />
+                            <StatRow label="Pte. Información" value={stats?.tickets?.byStatus?.['Pendiente de información'] || 0} color="bg-indigo-500" total={stats?.tickets?.total} />
+                            <StatRow label="Resueltos" value={stats?.tickets?.byStatus?.['Resuelto'] || 0} color="bg-success-500" total={stats?.tickets?.total} />
+                            <StatRow label="Cerrados" value={stats?.tickets?.byStatus?.['Cerrado'] || 0} color="bg-gray-500" total={stats?.tickets?.total} />
                         </div>
 
                         <div className="p-5 rounded-2xl bg-brand-neutral border border-brand-border/50 flex gap-4 mt-6 shadow-inner text-left">
                             <AlertTriangle className="w-6 h-6 text-brand-primary flex-shrink-0" />
                             <div>
                                 <h4 className="text-[11px] font-black text-brand-dark mb-1">Alerta operativa</h4>
-                                <p className="text-[11px] text-gray-500 font-semibold">Hay {stats?.tickets?.byStatus?.pendiente || 0} casos en proceso que requieren atención hoy.</p>
+                                <p className="text-[11px] text-gray-500 font-semibold">Hay {(stats?.tickets?.byStatus?.['En proceso'] || 0) + (stats?.tickets?.byStatus?.['Pendiente de información'] || 0)} casos activos que requieren atención.</p>
                             </div>
                         </div>
                     </div>

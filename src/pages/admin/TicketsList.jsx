@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Search, Filter, SlidersHorizontal, Plus, ArrowRight, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { TICKET_STATUS, getStatusStyle } from '../../utils/status';
 
 const MAIN_CATEGORIES = [
     {
@@ -156,7 +157,7 @@ export default function TicketsList() {
                     </div>
                 );
             case 'status':
-                return <StatusBadge status={ticket.status} />;
+                return <StatusBadge statusId={ticket.status_id} statusName={ticket.status} />;
             default:
                 return <span className="text-sm font-medium text-gray-500">{ticket[colId] || '-'}</span>;
         }
@@ -165,7 +166,7 @@ export default function TicketsList() {
     const filteredTickets = tickets.filter(t => {
         const matchSearch = (t.display_id && t.display_id.toLowerCase().includes(search.toLowerCase())) ||
             t.id.toLowerCase().includes(search.toLowerCase());
-        const matchStatus = statusFilter === 'todos' || t.status.toLowerCase() === statusFilter.toLowerCase();
+        const matchStatus = statusFilter === 'todos' || parseInt(t.status_id) === parseInt(statusFilter);
         return matchSearch && matchStatus;
     });
 
@@ -174,7 +175,7 @@ export default function TicketsList() {
         { id: 'ticket_type', title: 'Tipo' },
         { id: 'category', title: 'Categoría' },
         { id: 'creationDate', title: 'Fecha de creación' },
-        { id: 'email', title: 'Email' },
+        { id: 'email', title: 'Solicitante' },
         { id: 'status', title: 'Estado' }
     ];
 
@@ -221,9 +222,11 @@ export default function TicketsList() {
                                 className="bg-transparent border-none text-gray-600 focus:ring-0 cursor-pointer font-bold text-[12px] flex-1"
                             >
                                 <option value="todos">Todos</option>
-                                <option value="recibido">Recibidos</option>
-                                <option value="pendiente">Pendientes</option>
-                                <option value="resuelto">Resueltos</option>
+                                <option value="1">Recibidos</option>
+                                <option value="2">En proceso</option>
+                                <option value="3">Pendiente info</option>
+                                <option value="4">Resueltos</option>
+                                <option value="5">Cerrados</option>
                             </select>
                         </div>
                     </div>
@@ -376,18 +379,11 @@ export default function TicketsList() {
     );
 }
 
-function StatusBadge({ status }) {
-    const styles = {
-        recibido: 'bg-warning-500/10 text-warning-500 border-warning-500/20',
-        pendiente: 'bg-brand-primary/10 text-brand-primary border-brand-primary/20',
-        resueltos: 'bg-success-500/10 text-success-500 border-success-500/20',
-        resuelto: 'bg-success-500/10 text-success-500 border-success-500/20',
-        default: 'bg-gray-500/10 text-gray-500 border-gray-500/20'
-    };
-    const currentStyle = styles[status?.toLowerCase()] || styles.default;
+function StatusBadge({ statusId, statusName }) {
+    const currentStyle = getStatusStyle(statusId, statusName);
     return (
         <span className={`px-4 py-1.5 text-[10px] font-bold rounded-full border ${currentStyle} shadow-sm lowercase`}>
-            {status}
+            {statusName || TICKET_STATUS[statusId]?.label || '-'}
         </span>
     );
 }
