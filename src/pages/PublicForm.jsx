@@ -73,7 +73,7 @@ export default function PublicForm() {
             const reporter_id = userObj?.id || null;
 
             const payload = {
-                title: data.title,
+                tittle: data.title,
                 category_id: null,
                 category: selectedCategoryObj?.label || 'General',
                 type: data.sub_option,

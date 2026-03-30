@@ -97,7 +97,7 @@ export default function TicketsList() {
 
             const mainCatObj = MAIN_CATEGORIES.find(c => c.id === formData.main_category);
             const payload = {
-                title: formData.title,
+                tittle: formData.title,
                 category_id: null,
                 category: mainCatObj ? mainCatObj.label : 'General',
                 type: formData.sub_option,
