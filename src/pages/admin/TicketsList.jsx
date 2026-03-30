@@ -131,18 +131,10 @@ export default function TicketsList() {
                         <div className="text-[10px] font-bold text-gray-400 italic">Detalles</div>
                     </Link>
                 );
-            case 'type':
+            case 'ticket_type':
                 return (
-                    <div className="max-w-[280px] font-medium text-gray-500 text-[12px] line-clamp-1" title={ticket.type}>
-                        {ticket.type}
-                    </div>
-                );
-            case 'status':
-                return <StatusBadge status={ticket.status} />;
-            case 'createdAt':
-                return (
-                    <div className="text-gray-400 text-[11px] font-medium">
-                        {new Date(ticket.created_at).toLocaleDateString()}
+                    <div className="max-w-[150px] font-medium text-gray-500 text-[12px] line-clamp-1" title={ticket.ticket_type}>
+                        {ticket.ticket_type || '-'}
                     </div>
                 );
             case 'category':
@@ -151,6 +143,20 @@ export default function TicketsList() {
                         {ticket.category || 'General'}
                     </span>
                 );
+            case 'creationDate':
+                return (
+                    <div className="text-gray-400 text-[11px] font-medium">
+                        {ticket.creationDate || '-'}
+                    </div>
+                );
+            case 'email':
+                return (
+                    <div className="text-gray-500 text-[12px] font-medium truncate max-w-[180px]" title={ticket.email}>
+                        {ticket.email || '-'}
+                    </div>
+                );
+            case 'status':
+                return <StatusBadge status={ticket.status} />;
             default:
                 return <span className="text-sm font-medium text-gray-500">{ticket[colId] || '-'}</span>;
         }
@@ -165,8 +171,10 @@ export default function TicketsList() {
 
     const visibleColumns = [
         { id: 'id', title: 'Ticket' },
+        { id: 'ticket_type', title: 'Tipo' },
         { id: 'category', title: 'Categoría' },
-        { id: 'type', title: 'Servicio' },
+        { id: 'creationDate', title: 'Fecha de creación' },
+        { id: 'email', title: 'Email' },
         { id: 'status', title: 'Estado' }
     ];
 
