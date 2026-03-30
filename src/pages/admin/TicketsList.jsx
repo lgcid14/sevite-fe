@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Search, Filter, SlidersHorizontal, Plus, ArrowRight, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Filter, SlidersHorizontal, Plus, ArrowRight, X, ChevronLeft, ChevronRight, Edit3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { TICKET_STATUS, getStatusStyle } from '../../utils/status';
 
@@ -56,8 +56,17 @@ export default function TicketsList() {
         details: ''
     });
     const [ticketTypes, setTicketTypes] = useState([]);
+    const [currentUser, setCurrentUser] = useState(null);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editingTicket, setEditingTicket] = useState(null);
+    const [editFormData, setEditFormData] = useState({
+        status_id: '',
+        notes: ''
+    });
 
     useEffect(() => {
+        const userStr = localStorage.getItem('servit_user');
+        if (userStr) setCurrentUser(JSON.parse(userStr));
         fetchTicketsAndConfig();
     }, []);
 
@@ -119,18 +128,61 @@ export default function TicketsList() {
         }
     };
 
+    const handleUpdateTicket = async (e) => {
+        e.preventDefault();
+        try {
+            const payload = {
+                status_id: parseInt(editFormData.status_id),
+                notes: editFormData.status_id === '3' ? editFormData.notes : '',
+                owner_id: currentUser?.id,
+                userId: currentUser?.id
+            };
+            const res = await axios.patch(`${API}/api/tickets/${editingTicket.id}`, payload);
+            if (res.data.success) {
+                setIsEditModalOpen(false);
+                setEditingTicket(null);
+                fetchTicketsAndConfig();
+            }
+        } catch (err) {
+            alert('Error al actualizar ticket: ' + (err.response?.data?.error || err.message));
+        }
+    };
+
+    const openEditModal = (ticket) => {
+        setEditingTicket(ticket);
+        setEditFormData({
+            status_id: ticket.status_id,
+            notes: ticket.notes || ''
+        });
+        setIsEditModalOpen(true);
+    };
+
     const renderCell = (ticket, colId) => {
         switch (colId) {
             case 'id':
                 // Use display_id (TK000XXX) if available, otherwise fallback to id
                 const displayId = ticket.display_id || ticket.id.substring(0, 8).toUpperCase();
                 return (
-                    <Link to={`/admin/tickets/${ticket.id}`} className="group/id block">
-                        <div className="font-mono text-xs font-bold text-brand-primary mb-1 group-hover/id:translate-x-1 transition-transform flex items-center gap-2">
-                            #{displayId} <ArrowRight className="w-3 h-3 opacity-0 group-hover/id:opacity-100 transition-opacity" />
-                        </div>
-                        <div className="text-[10px] font-bold text-gray-400 italic">Detalles</div>
-                    </Link>
+                    <div className="flex items-center gap-3">
+                        <Link to={`/admin/tickets/${ticket.id}`} className="group/id block flex-1">
+                            <div className="font-mono text-xs font-bold text-brand-primary mb-1 group-hover/id:translate-x-1 transition-transform flex items-center gap-2">
+                                #{displayId} <ArrowRight className="w-3 h-3 opacity-0 group-hover/id:opacity-100 transition-opacity" />
+                            </div>
+                            <div className="text-[10px] font-bold text-gray-400 italic">Detalles</div>
+                        </Link>
+                        {currentUser?.role_id === 1 && (
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    openEditModal(ticket);
+                                }}
+                                title="Editar estado"
+                                className="p-2 hover:bg-brand-primary/10 rounded-full text-brand-primary transition-colors border border-transparent hover:border-brand-primary/20"
+                            >
+                                <Edit3 className="w-4 h-4" />
+                            </button>
+                        )}
+                    </div>
                 );
             case 'ticket_type':
                 return (
@@ -368,6 +420,60 @@ export default function TicketsList() {
                                     Generar Ticket
                                 </button>
                                 <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-4 bg-brand-light text-brand-primary font-bold text-sm rounded-full border border-brand-accent/20 hover:bg-brand-accent/10 transition-all">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+            {/* EDIT TICKET MODAL (SUPPORT ONLY) */}
+            {isEditModalOpen && editingTicket && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/30 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-brand-border animate-in zoom-in-95 duration-300">
+                        <div className="p-5 border-b border-brand-border/50 flex justify-between items-center bg-brand-light/30">
+                            <div>
+                                <h3 className="text-lg font-bold text-brand-text">Actualizar Ticket</h3>
+                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">#{editingTicket.display_id}</p>
+                            </div>
+                            <button onClick={() => setIsEditModalOpen(false)} className="p-2 hover:bg-white rounded-full transition-colors">
+                                <X className="w-5 h-5 text-gray-400" />
+                            </button>
+                        </div>
+                        <form onSubmit={handleUpdateTicket} className="p-6 space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-2">Nuevo Estado</label>
+                                <select
+                                    required
+                                    value={editFormData.status_id}
+                                    onChange={(e) => setEditFormData({ ...editFormData, status_id: e.target.value })}
+                                    className="w-full px-6 py-3 rounded-full border border-brand-border focus:ring-4 focus:ring-brand-primary/10 transition-all text-sm font-medium bg-white"
+                                >
+                                    {Object.values(TICKET_STATUS).map(s => (
+                                        <option key={s.id} value={s.id}>{s.label.toUpperCase()}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {editFormData.status_id === '3' && (
+                                <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
+                                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-2">Observaciones *</label>
+                                    <textarea
+                                        required
+                                        rows="4"
+                                        value={editFormData.notes}
+                                        onChange={(e) => setEditFormData({ ...editFormData, notes: e.target.value })}
+                                        className="w-full px-5 py-3 rounded-xl border border-brand-border focus:ring-4 focus:ring-brand-primary/10 transition-all text-sm font-medium"
+                                        placeholder="Ingrese el motivo o información faltante..."
+                                    />
+                                </div>
+                            )}
+
+                            <div className="pt-4 flex gap-4">
+                                <button type="submit" className="flex-1 py-3.5 brand-gradient text-white font-bold text-xs rounded-full shadow-lg shadow-brand-primary/20 hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-widest">
+                                    Guardar Cambios
+                                </button>
+                                <button type="button" onClick={() => setIsEditModalOpen(false)} className="flex-1 py-3.5 bg-brand-light text-brand-primary font-bold text-xs rounded-full border border-brand-accent/20 hover:bg-brand-accent/10 transition-all uppercase tracking-widest">
                                     Cancelar
                                 </button>
                             </div>
