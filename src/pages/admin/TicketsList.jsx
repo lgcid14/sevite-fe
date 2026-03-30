@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Search, Filter, SlidersHorizontal, Plus, ArrowRight, X, ChevronLeft, ChevronRight, Edit3 } from 'lucide-react';
+import { Search, Filter, SlidersHorizontal, Plus, ArrowRight, X, ChevronLeft, ChevronRight, Edit3, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import TicketQuickViewModal from '../../components/TicketQuickViewModal';
 import { TICKET_STATUS, getStatusStyle } from '../../utils/status';
 
 const MAIN_CATEGORIES = [
@@ -42,7 +43,6 @@ const MAIN_CATEGORIES = [
 
 export default function TicketsList() {
     const [tickets, setTickets] = useState([]);
-    const [config, setConfig] = useState(null);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('todos');
@@ -63,27 +63,22 @@ export default function TicketsList() {
         status_id: '',
         notes: ''
     });
+    const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
+    const [quickViewTicket, setQuickViewTicket] = useState(null);
+    const [quickViewLoading, setQuickViewLoading] = useState(false);
 
     useEffect(() => {
         const userStr = localStorage.getItem('servit_user');
         if (userStr) setCurrentUser(JSON.parse(userStr));
         fetchTicketsAndConfig();
-    }, []);
+    }, [fetchTicketsAndConfig]);
 
     const API = import.meta.env.VITE_API_URL;
 
-    const fetchTicketsAndConfig = async () => {
+    const fetchTicketsAndConfig = useCallback(async () => {
         try {
             const ticketsRes = await axios.get(`${API}/api/tickets`);
             setTickets(ticketsRes.data.data);
-
-            // Also try to get categories for the modal, but don't blow up if it fails
-            try {
-                const configRes = await axios.get(`${API}/api/config/categories`);
-                if (configRes.data.success) setConfig(configRes.data.data);
-            } catch (e) {
-                console.warn('Could not load categories:', e.message);
-            }
 
             try {
                 const typesRes = await axios.get(`${API}/api/tickets/types`);
@@ -96,7 +91,7 @@ export default function TicketsList() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [API]);
 
     const handleCreateTicket = async (e) => {
         e.preventDefault();
@@ -157,19 +152,40 @@ export default function TicketsList() {
         setIsEditModalOpen(true);
     };
 
+    const handleOpenQuickView = async (ticketId) => {
+        setIsQuickViewOpen(true);
+        setQuickViewLoading(true);
+        try {
+            const res = await axios.get(`${API}/api/tickets/${ticketId}`);
+            if (res.data.success) {
+                setQuickViewTicket(res.data.data);
+            }
+        } catch (err) {
+            console.error('Error fetching ticket details:', err);
+        } finally {
+            setQuickViewLoading(false);
+        }
+    };
+
     const renderCell = (ticket, colId) => {
         switch (colId) {
-            case 'id':
+            case 'id': {
                 // Use display_id (TK000XXX) if available, otherwise fallback to id
                 const displayId = ticket.display_id || ticket.id.substring(0, 8).toUpperCase();
                 return (
-                    <Link to={`/admin/tickets/${ticket.id}`} className="group/id block flex-1">
+                    <button 
+                        onClick={() => handleOpenQuickView(ticket.id)}
+                        className="group/id block text-left w-full hover:bg-brand-primary/5 p-2 -m-2 rounded-xl transition-all"
+                    >
                         <div className="font-mono text-xs font-bold text-brand-primary mb-1 group-hover/id:translate-x-1 transition-transform flex items-center gap-2">
-                            #{displayId} <ArrowRight className="w-3 h-3 opacity-0 group-hover/id:opacity-100 transition-opacity" />
+                            #{displayId} <Eye className="w-3 h-3 opacity-0 group-hover/id:opacity-100 transition-opacity" />
                         </div>
-                        <div className="text-[10px] font-bold text-gray-400 italic">Detalles</div>
-                    </Link>
+                        <div className="text-[10px] font-bold text-gray-400 italic flex items-center gap-1">
+                            Vistazo rápido <ArrowRight className="w-2 h-2" />
+                        </div>
+                    </button>
                 );
+            }
             case 'ticket_type':
                 return (
                     <div className="max-w-[150px] font-medium text-gray-500 text-[12px] line-clamp-1" title={ticket.ticket_type}>
@@ -481,6 +497,13 @@ export default function TicketsList() {
                     </div>
                 </div>
             )}
+            
+            <TicketQuickViewModal 
+                isOpen={isQuickViewOpen}
+                onClose={() => setIsQuickViewOpen(false)}
+                ticket={quickViewTicket}
+                loading={quickViewLoading}
+            />
         </div>
     );
 }
