@@ -163,26 +163,12 @@ export default function TicketsList() {
                 // Use display_id (TK000XXX) if available, otherwise fallback to id
                 const displayId = ticket.display_id || ticket.id.substring(0, 8).toUpperCase();
                 return (
-                    <div className="flex items-center gap-3">
-                        <Link to={`/admin/tickets/${ticket.id}`} className="group/id block flex-1">
-                            <div className="font-mono text-xs font-bold text-brand-primary mb-1 group-hover/id:translate-x-1 transition-transform flex items-center gap-2">
-                                #{displayId} <ArrowRight className="w-3 h-3 opacity-0 group-hover/id:opacity-100 transition-opacity" />
-                            </div>
-                            <div className="text-[10px] font-bold text-gray-400 italic">Detalles</div>
-                        </Link>
-                        {(currentUser?.roleId === 1 || currentUser?.role_id === 1 || currentUser?.roleId === '1' || currentUser?.role_id === '1' || currentUser?.role === 'agente') && (
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    openEditModal(ticket);
-                                }}
-                                title="Editar estado"
-                                className="p-2 hover:bg-brand-primary/10 rounded-full text-brand-primary transition-colors border border-transparent hover:border-brand-primary/20"
-                            >
-                                <Edit3 className="w-4 h-4" />
-                            </button>
-                        )}
-                    </div>
+                    <Link to={`/admin/tickets/${ticket.id}`} className="group/id block flex-1">
+                        <div className="font-mono text-xs font-bold text-brand-primary mb-1 group-hover/id:translate-x-1 transition-transform flex items-center gap-2">
+                            #{displayId} <ArrowRight className="w-3 h-3 opacity-0 group-hover/id:opacity-100 transition-opacity" />
+                        </div>
+                        <div className="text-[10px] font-bold text-gray-400 italic">Detalles</div>
+                    </Link>
                 );
             case 'ticket_type':
                 return (
@@ -210,6 +196,19 @@ export default function TicketsList() {
                 );
             case 'status':
                 return <StatusBadge statusId={ticket.status_id} statusName={ticket.status} />;
+            case 'actions':
+                return (currentUser?.roleId === 1 || currentUser?.role_id === 1 || currentUser?.roleId === '1' || currentUser?.role_id === '1' || currentUser?.role === 'agente') ? (
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            openEditModal(ticket);
+                        }}
+                        title="Editar estado"
+                        className="p-2 hover:bg-brand-primary/10 rounded-full text-brand-primary transition-colors border border-transparent hover:border-brand-primary/20"
+                    >
+                        <Edit3 className="w-4 h-4" />
+                    </button>
+                ) : null;
             default:
                 return <span className="text-sm font-medium text-gray-500">{ticket[colId] || '-'}</span>;
         }
@@ -228,7 +227,8 @@ export default function TicketsList() {
         { id: 'category', title: 'Categoría' },
         { id: 'creationDate', title: 'Fecha de creación' },
         { id: 'email', title: 'Solicitante' },
-        { id: 'status', title: 'Estado' }
+        { id: 'status', title: 'Estado' },
+        { id: 'actions', title: '' }
     ];
 
     if (loading) return (
