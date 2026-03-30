@@ -67,12 +67,6 @@ export default function TicketsList() {
     const [quickViewTicket, setQuickViewTicket] = useState(null);
     const [quickViewLoading, setQuickViewLoading] = useState(false);
 
-    useEffect(() => {
-        const userStr = localStorage.getItem('servit_user');
-        if (userStr) setCurrentUser(JSON.parse(userStr));
-        fetchTicketsAndConfig();
-    }, [fetchTicketsAndConfig]);
-
     const API = import.meta.env.VITE_API_URL;
 
     const fetchTicketsAndConfig = useCallback(async () => {
@@ -92,6 +86,12 @@ export default function TicketsList() {
             setLoading(false);
         }
     }, [API]);
+
+    useEffect(() => {
+        const userStr = localStorage.getItem('servit_user');
+        if (userStr) setCurrentUser(JSON.parse(userStr));
+        fetchTicketsAndConfig();
+    }, [fetchTicketsAndConfig]);
 
     const handleCreateTicket = async (e) => {
         e.preventDefault();
