@@ -170,7 +170,7 @@ export default function TicketsList() {
                             </div>
                             <div className="text-[10px] font-bold text-gray-400 italic">Detalles</div>
                         </Link>
-                        {currentUser?.role_id === 1 && (
+                        {(currentUser?.roleId === 1 || currentUser?.role_id === 1 || currentUser?.roleId === '1' || currentUser?.role_id === '1' || currentUser?.role === 'agente') && (
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
